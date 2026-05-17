@@ -47,6 +47,32 @@ Du benötigst:
 - 🏢 Organisations-ID
 - 🏷️ Organisationsname
 
+<p align="center">
+  <img src="img/setup.png" width="400">
+</p>
+
+## 🔑 GroupAlarm API Token erstellen
+
+Für die Einrichtung der Integration benötigst du einen **Personal Access Token** aus GroupAlarm.
+
+So erstellst du ihn:
+
+1. Öffne https://app.groupalarm.com
+2. Melde dich mit deinem Account an
+3. Klicke oben rechts auf dein Profilbild
+4. Öffne **Profil**
+<p align="center">
+  <img src="img/profile.png" width="500">
+</p>
+5. Wechsle zum Tab **Sicherheit**
+6. Scrolle nach unten zu **API-Schlüssel**
+<p align="center">
+  <img src="img/API-Key.png" width="500">
+</p>
+7. Erstelle einen neuen Token und kopiere ihn
+
+⚠️ Bewahre den Token sicher auf – er wird später in Home Assistant benötigt.
+
 ---
 
 ## 📊 Entitäten

@@ -1,7 +1,7 @@
 {
   "domain": "ha_groupalarm_api",
   "name": "GroupAlarm API",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "documentation": "https://github.com/GamingonTour1/ha-groupalarm-api",
   "issue_tracker": "https://github.com/GamingonTour1/ha-groupalarm-api/issues",
   "codeowners": ["@GamingonTour1"],
