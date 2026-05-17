@@ -19,7 +19,7 @@ class GroupAlarmCoordinator(DataUpdateCoordinator):
         super().__init__(
             hass,
             logger=_LOGGER,
-            name="ha_groupalarm_api",
+            name="groupalarm",
             update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
         )
 

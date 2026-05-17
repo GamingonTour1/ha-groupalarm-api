@@ -3,7 +3,7 @@
 # Proprietary and confidential
 # Written by Lennox Matzerath (GamingonTour1) <gamingontour2016@gmail.com>
 
-DOMAIN = "ha_groupalarm_api"
+DOMAIN = "groupalarm"
 
 CONF_API_TOKEN = "api_token"
 CONF_ORG_ID = "org_id"
