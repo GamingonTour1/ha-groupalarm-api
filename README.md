@@ -53,9 +53,9 @@ Du benötigst:
 
 ### Sensor
 
-| Entity | Beschreibung |
-|--------|-------------|
-| `sensor.groupalarm_latest_alarm` | Hauptsensor mit allen Alarmdaten |
+| Entity                     | Beschreibung |
+|----------------------------|-------------|
+| `sensor.NAME_latest_alarm` | Hauptsensor mit allen Alarmdaten |
 
 **Attribute enthalten:**
 - message
@@ -70,9 +70,9 @@ Du benötigst:
 
 ### Binary Sensor
 
-| Entity | Beschreibung |
-|--------|-------------|
-| `binary_sensor.groupalarm_active` | Zeigt ob aktuell ein Alarm aktiv ist |
+| Entity                      | Beschreibung |
+|-----------------------------|-------------|
+| `binary_sensor.NAME_active` | Zeigt ob aktuell ein Alarm aktiv ist |
 
 ---
 
