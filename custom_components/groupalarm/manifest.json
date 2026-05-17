@@ -3,10 +3,9 @@
   "name": "GroupAlarm API",
   "codeowners": ["@GamingonTour1"],
   "config_flow": true,
-  "dependencies": [],
   "documentation": "https://github.com/GamingonTour1/ha-groupalarm-api",
-  "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/GamingonTour1/ha-groupalarm-api/issues",
+  "iot_class": "cloud_polling",
   "requirements": [],
   "version": "1.0.1"
 }
