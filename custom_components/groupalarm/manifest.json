@@ -1,5 +1,5 @@
 {
-  "domain": "ha-groupalarm-api",
+  "domain": "groupalarm",
   "name": "GroupAlarm API",
   "codeowners": ["@GamingonTour1"],
   "config_flow": true,
