@@ -22,7 +22,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class GroupAlarmLatestSensor(CoordinatorEntity, Entity):
 
     def __init__(self, coordinator):
-
         super().__init__(coordinator)
 
         org = slugify(coordinator.org_name)
@@ -44,7 +43,7 @@ class GroupAlarmLatestSensor(CoordinatorEntity, Entity):
         latest = self.coordinator.data.get("latest_alarm") or {}
 
         if not alarms:
-            return
+            return {}
 
         return {
             "message": latest.get("message"),

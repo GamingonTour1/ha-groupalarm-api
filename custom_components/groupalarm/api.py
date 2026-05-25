@@ -6,6 +6,9 @@
 import aiohttp
 
 
+BASE_URL = "https://app.groupalarm.com/api/v1"
+
+
 class GroupAlarmAPI:
     def __init__(self, session: aiohttp.ClientSession, token: str, org_id: int):
         self.session = session
@@ -19,16 +22,23 @@ class GroupAlarmAPI:
         }
 
         async with self.session.get(url, headers=headers) as resp:
+            if resp.status != 200:
+                raise Exception(f"GroupAlarm API error {resp.status}: {await resp.text()}")
             return await resp.json()
 
     async def get_alarms(self, limit: int = 10):
-        url = (
-            f"https://app.groupalarm.com/api/v1/alarms"
-            f"?organization={self.org_id}&limit={limit}"
-        )
+        url = f"{BASE_URL}/alarms?organization={self.org_id}&limit={limit}"
         return await self._get(url)
 
     async def get_alarm(self, alarm_id: int):
-        return await self._get(
-            f"https://app.groupalarm.com/api/v1/alarm/{alarm_id}"
-        )
+        url = f"{BASE_URL}/alarm/{alarm_id}"
+        return await self._get(url)
+
+    async def get_organizations(self):
+        url = f"{BASE_URL}/organizations"
+        data = await self._get(url)
+
+        if isinstance(data, list):
+            return data
+
+        return data.get("organizations", [])

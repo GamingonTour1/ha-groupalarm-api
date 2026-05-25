@@ -4,6 +4,7 @@
 # Written by Lennox Matzerath (GamingonTour1) <gamingontour2016@gmail.com>
 
 import logging
+
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -15,11 +16,11 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 
+PLATFORMS = ["sensor", "binary_sensor"]
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     session = async_get_clientsession(hass)
-
-    org_name = entry.data["org_name"]
 
     api = GroupAlarmAPI(
         session=session,
@@ -30,7 +31,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     coordinator = GroupAlarmCoordinator(
         hass,
         api,
-        org_name=org_name
+        org_name=entry.data["org_name"],
     )
 
     await coordinator.async_config_entry_first_refresh()
@@ -38,16 +39,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
-    await hass.config_entries.async_forward_entry_setups(
-        entry,
-        ["sensor", "binary_sensor"]
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    return True
+
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
+
+    unload_ok = await hass.config_entries.async_unload_platforms(
+        entry, PLATFORMS
     )
 
-    return True
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id, None)
 
-
-async def async_unload_entry(hass, entry):
-
-    hass.data[DOMAIN].pop(entry.entry_id)
-
-    return True
+    return unload_ok

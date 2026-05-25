@@ -3,6 +3,8 @@
 # Proprietary and confidential
 # Written by Lennox Matzerath (GamingonTour1) <gamingontour2016@gmail.com>
 
+from datetime import datetime, timezone
+
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -22,7 +24,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class GroupAlarmActiveBinarySensor(CoordinatorEntity, BinarySensorEntity):
 
     def __init__(self, coordinator):
-
         super().__init__(coordinator)
 
         org = slugify(coordinator.org_name)
@@ -45,10 +46,8 @@ class GroupAlarmActiveBinarySensor(CoordinatorEntity, BinarySensorEntity):
             return True
 
         try:
-            from datetime import datetime, timezone
-
             end_dt = datetime.fromisoformat(end_date.replace("Z", "+00:00"))
             return datetime.now(timezone.utc) < end_dt
 
-        except Exception:
-            return True
+        except ValueError:
+            return False

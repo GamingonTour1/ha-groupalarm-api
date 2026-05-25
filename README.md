@@ -7,7 +7,7 @@
 
 Eine Home Assistant Integration für die **GroupAlarm API**, um Alarme, Einsätze und Rückmeldungen direkt in Home Assistant zu integrieren.
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=GamingonTour1&repository=ha-groupalarm-api&category=plugin)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=GamingonTour1&repository=ha-groupalarm-api&category=integration)
 ---
 
 ## ⚡ Features
@@ -27,11 +27,17 @@ Eine Home Assistant Integration für die **GroupAlarm API**, um Alarme, Einsätz
 
 ### HACS (empfohlen)
 
-1. HACS → Integrationen → Custom Repository hinzufügen
-2. URL einfügen: https://github.com/GamingonTour1/ha-groupalarm-api
-3. Kategorie: **Integration**
-4. Installieren
-5. Home Assistant neu starten
+1. HACS → **Integrationen**
+2. Menü → **Custom Repository hinzufügen**
+3. Repository URL einfügen:
+
+   ```
+   https://github.com/GamingonTour1/ha-groupalarm-api
+   ```
+
+4. Kategorie: **Integration**
+5. Integration installieren
+6. Home Assistant neu starten
 
 ---
 
@@ -44,34 +50,53 @@ Nach der Installation:
 Du benötigst:
 
 - 🔑 API Token (GroupAlarm Personal Access Token)
-- 🏢 Organisations-ID
-- 🏷️ Organisationsname
 
 <p align="center">
-  <img src="img/setup.png" width="400">
+  <img src="img/setup.png" width="400"><br>
+  <em>API Schlüssel bei der Einrichtung einmalig angeben</em>
 </p>
 
-## 🔑 GroupAlarm API Token erstellen
-
-Für die Einrichtung der Integration benötigst du einen **Personal Access Token** aus GroupAlarm.
-
-So erstellst du ihn:
-
-1. Öffne https://app.groupalarm.com
-2. Melde dich mit deinem Account an
-3. Klicke oben rechts auf dein Profilbild
-4. Öffne **Profil**
 <p align="center">
-  <img src="img/profile.png" width="500">
+  <img src="img/setup2.png" width="400"><br>
+  <em>Organisation auswählen</em>
 </p>
-5. Wechsle zum Tab **Sicherheit**
-6. Scrolle nach unten zu **API-Schlüssel**
-<p align="center">
-  <img src="img/API-Key.png" width="500">
-</p>
-7. Erstelle einen neuen Token und kopiere ihn
 
-⚠️ Bewahre den Token sicher auf – er wird später in Home Assistant benötigt.
+## 🔑 API-Token in GroupAlarm erstellen
+
+Für die Einrichtung der Integration benötigst du einen persönlichen API-Token aus der GroupAlarm Web-App.
+
+### 1️⃣ GroupAlarm öffnen und anmelden
+
+Öffne die Web-App und melde dich mit deinem Account an:  
+👉 https://app.groupalarm.com
+
+---
+
+### 2️⃣ Profil öffnen
+
+Klicke oben rechts auf dein Profilbild und öffne **Profil**.
+
+<p align="center">
+  <img src="img/profile.png" width="500"><br>
+  <em>Profil öffnen</em>
+</p>
+
+---
+
+### 3️⃣ API-Schlüssel erstellen
+
+1. Wechsle zum Tab **Sicherheit**
+2. Scrolle nach unten zum Bereich **API-Schlüssel**
+3. Klicke auf **Neuen API-Schlüssel erstellen**
+4. Vergib einen Namen (z. B. *Home Assistant*)
+5. Kopiere den erzeugten Token
+
+<p align="center">
+  <img src="img/api-key.png" width="500"><br>
+  <em>API-Schlüssel erstellen</em>
+</p>
+
+⚠️ **Wichtig:** Der Token wird nur einmal angezeigt. Speichere ihn sofort.
 
 ---
 
@@ -110,4 +135,4 @@ API Token wird lokal in Home Assistant gespeichert und nicht extern übertragen.
 
 ## 📄 License
 
-Proprietary – All rights reserved.
+**Proprietary – All rights reserved.**

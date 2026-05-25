@@ -1,0 +1,25 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "GroupAlarm API DEV",
+        "description": "Bitte gib deinen API Token ein.",
+        "data": {
+          "api_token": "API Token"
+        }
+      },
+      "org": {
+        "title": "Organisation auswählen",
+        "description": "Bitte wähle eine Organisation aus",
+        "data": {
+          "org_id": "Organisation"
+        }
+      }
+    },
+    "abort": {
+      "no_organizations": "Es wurden keine weiteren Organisationen gefunden.",
+      "cannot_connect": "Verbindung zur GroupAlarm API fehlgeschlagen",
+      "missing_token": "API Token fehlt. Bitte Integration neu einrichten."
+    }
+  }
+}
