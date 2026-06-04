@@ -5,20 +5,29 @@
 [![GitHub Stars](https://img.shields.io/github/stars/GamingonTour1/ha-groupalarm-api?style=for-the-badge&color=yellow)](https://github.com/GamingonTour1/ha-groupalarm-api/stargazers)
 [![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)](LICENSE)
 
-Eine Home Assistant Integration für die **GroupAlarm API**, um Alarme, Einsätze und Rückmeldungen direkt in Home Assistant zu integrieren.
+Eine Home Assistant Integration für die **GroupAlarm API**, um Alarme, Einsätze, Termine und Rückmeldungen direkt in Home Assistant zu integrieren.
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=GamingonTour1&repository=ha-groupalarm-api&category=integration)
+--- 
+## 🌍 Languages
+
+- 🇩🇪 Deutsch
+- 🇬🇧 English (README coming soon...)
+- 🇫🇷 Français (README coming soon...)
+
 ---
 
 ## ⚡ Features
 
-- 🔔 Abruf von aktuellen GroupAlarm Einsätzen
-- 📡 Automatische Aktualisierung via Coordinator (Polling)
-- 🧠 Ein zentraler Sensor mit allen Alarmdaten
+- 🔔 Abruf von aktuellen GroupAlarm Einsätzen (Alarme)
+- 📅 Kalender-Integration für Termine (optional aktivierbar)
+- 📡 Automatische Aktualisierung via DataUpdateCoordinator (Polling)
+- 🧠 Zentrale Verarbeitung aller Organisationsdaten
 - 🔁 Binary Sensor für aktiven Alarmstatus
 - 🧾 Vollständige Alarmdetails (Message, Event, Feedback, Resources)
-- 👤 Unterstützung für Organisationen
-- ⚙️ Konfiguration via UI (Config Flow)
+- 👤 Unterstützung mehrerer Organisationen
+- ⚙️ Konfiguration via UI (Config Flow + Options Flow)
+- ⏱️ Einstellbarer Scan-Intervall (Polling Rate)
+- 📆 Einstellbare Termin-Vorschau (Lookahead Days)
 - 🚀 HACS kompatibel
 
 ---
@@ -29,12 +38,7 @@ Eine Home Assistant Integration für die **GroupAlarm API**, um Alarme, Einsätz
 
 1. HACS → **Integrationen**
 2. Menü → **Custom Repository hinzufügen**
-3. Repository URL einfügen:
-
-   ```
-   https://github.com/GamingonTour1/ha-groupalarm-api
-   ```
-
+3. Repository URL einfügen: https://github.com/GamingonTour1/ha-groupalarm-api
 4. Kategorie: **Integration**
 5. Integration installieren
 6. Home Assistant neu starten
@@ -50,80 +54,115 @@ Nach der Installation:
 Du benötigst:
 
 - 🔑 API Token (GroupAlarm Personal Access Token)
+- 🏢 Mitglied einer Organisation in GroupAlarm
 
+1. Lege einen beliebigen Namen fest und füge deinen API Token ein. Falls du deinen Terminkalender von GroupAlarm in Homeassistant integrieren möchtest, dann kannst du ihn unten mit der Checkbox aktivieren.
 <p align="center">
-  <img src="img/setup.png" width="400"><br>
-  <em>API Schlüssel bei der Einrichtung einmalig angeben</em>
+  <img src="img/setup.png" width="500"><br>
+  <em>Einrichtung Schritt 1</em>
 </p>
 
+2. Wähle die Organisationen aus, welche du in GroupAlarm integrieren möchtest
 <p align="center">
-  <img src="img/setup2.png" width="400"><br>
-  <em>Organisation auswählen</em>
+  <img src="img/setup2.png" width="500"><br>
+  <em>Einrichtung Schritt 2</em>
 </p>
-
-## 🔑 API-Token in GroupAlarm erstellen
-
-Für die Einrichtung der Integration benötigst du einen persönlichen API-Token aus der GroupAlarm Web-App.
-
-### 1️⃣ GroupAlarm öffnen und anmelden
-
-Öffne die Web-App und melde dich mit deinem Account an:  
-👉 https://app.groupalarm.com
+3. Fertig! :D
 
 ---
 
-### 2️⃣ Profil öffnen
+## ⚙️ Optionen (nachträglich änderbar)
 
-Klicke oben rechts auf dein Profilbild und öffne **Profil**.
+Nach der Einrichtung kannst du die Integration jederzeit über  
+**„Gerät → Konfigurieren“** anpassen.
+
+### Verfügbare Optionen:
+
+- 🏢 Organisationen hinzufügen/entfernen
+- 📅 Kalender aktivieren/deaktivieren
+- ⏱️ Scan Intervall (Polling) ändern
+- 📆 Termin-Vorschau (Lookahead Tage) ändern
+
+<p align="center">
+  <img src="img/options.png" width="400"><br>
+  <em>Verfügbare Optionen</em>
+</p>
+
+⚠️ Änderungen werden automatisch übernommen (kein Neustart notwendig).
+
+---
+
+## 🔑 API-Token in GroupAlarm erstellen
+
+### 1️⃣ GroupAlarm öffnen und anmelden
+👉 https://app.groupalarm.com
+
+### 2️⃣ Profil öffnen
+Profilbild → **Profil**
 
 <p align="center">
   <img src="img/profile.png" width="500"><br>
   <em>Profil öffnen</em>
 </p>
 
----
-
 ### 3️⃣ API-Schlüssel erstellen
-
-1. Wechsle zum Tab **Sicherheit**
-2. Scrolle nach unten zum Bereich **API-Schlüssel**
-3. Klicke auf **Neuen API-Schlüssel erstellen**
-4. Vergib einen Namen (z. B. *Home Assistant*)
-5. Kopiere den erzeugten Token
+- Tab **Sicherheit**
+- API-Schlüssel erstellen
 
 <p align="center">
   <img src="img/api-key.png" width="500"><br>
   <em>API-Schlüssel erstellen</em>
 </p>
 
-⚠️ **Wichtig:** Der Token wird nur einmal angezeigt. Speichere ihn sofort.
+- Namen vergeben (z. B. Home Assistant)
+- Token kopieren
+
+⚠️ Der Token wird nur einmal angezeigt.
 
 ---
 
 ## 📊 Entitäten
 
-### Sensor
+### 🧠 Sensor
 
-| Entity                     | Beschreibung |
-|----------------------------|-------------|
-| `sensor.NAME_latest_alarm` | Hauptsensor mit allen Alarmdaten |
+| Entity                        | Beschreibung |
+|-------------------------------|-------------|
+| `sensor.ORGNAME_latest_alarm` | Hauptsensor mit Alarmdaten |
 
-**Attribute enthalten:**
+**Attribute:**
 - message
 - event
 - creator
-- start/end time
+- start/endDate
 - alarmResources
 - optionalContent
 - feedback
 
 ---
 
-### Binary Sensor
+### 🔁 Binary Sensor
 
-| Entity                      | Beschreibung |
-|-----------------------------|-------------|
-| `binary_sensor.NAME_active` | Zeigt ob aktuell ein Alarm aktiv ist |
+| Entity                         | Beschreibung |
+|--------------------------------|-------------|
+| `binary_sensor.ORGNAME_active` | Zeigt ob aktuell ein Alarm aktiv ist |
+
+---
+
+### 📅 Kalender (optional)
+
+| Entity             | Beschreibung |
+|--------------------|-------------|
+| `calendar.ORGNAME` | Termine der Organisation |
+
+---
+
+## ⚙️ Performance & Polling
+
+Die Integration nutzt einen zentralen Coordinator:
+
+- Standard Scan Intervall: **30 Sekunden (konfigurierbar)**
+- API Lookahead für Termine: **30 Tage (konfigurierbar)**
+- Effiziente Bündelung aller API Requests
 
 ---
 

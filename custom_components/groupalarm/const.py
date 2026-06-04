@@ -6,7 +6,13 @@
 DOMAIN = "groupalarm"
 
 CONF_API_TOKEN = "api_token"
-CONF_ORG_ID = "org_id"
-CONF_ORG_NAME = "org_name"
+CONF_HUB_NAME = "hub_name"
+CONF_ORGANIZATIONS = "organizations"
+
+CONF_SCAN_INTERVAL = "scan_interval"
+CONF_APPOINTMENT_LOOKAHEAD_DAYS = "appointment_lookahead_days"
+
+CONF_ENABLE_APPOINTMENTS = "enable_appointments"
 
 DEFAULT_SCAN_INTERVAL = 30
+DEFAULT_APPOINTMENT_LOOKAHEAD_DAYS = 30

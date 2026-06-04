@@ -3,44 +3,117 @@
 # Proprietary and confidential
 # Written by Lennox Matzerath (GamingonTour1) <gamingontour2016@gmail.com>
 
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN
 from .utils import slugify
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
-
+async def async_setup_entry(
+    hass,
+    entry,
+    async_add_entities,
+):
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
-    async_add_entities([
-        GroupAlarmLatestSensor(coordinator)
-    ])
+    entities = []
+
+    for org_id in coordinator.orgs:
+        entities.append(
+            GroupAlarmLatestSensor(
+                coordinator,
+                org_id,
+                entry,
+            )
+        )
+
+    async_add_entities(entities)
 
 
-class GroupAlarmLatestSensor(CoordinatorEntity, Entity):
+class GroupAlarmLatestSensor(
+    CoordinatorEntity,
+    Entity,
+):
 
-    def __init__(self, coordinator):
+    def __init__(
+        self,
+        coordinator,
+        org_id,
+        entry,
+    ):
         super().__init__(coordinator)
 
-        org = slugify(coordinator.org_name)
+        self.org_id = int(org_id)
 
-        self._attr_name = f"{coordinator.org_name} Latest Alarm"
-        self._attr_unique_id = f"{org}_latest_alarm"
+        org = coordinator.org_info.get(
+            self.org_id,
+            {},
+        )
+
+        org_name = org.get(
+            "name",
+            f"Org {self.org_id}",
+        )
+
+        org_slug = slugify(org_name)
+
+        self._attr_name = (
+            f"{org_name} Latest Alarm"
+        )
+
+        self._attr_unique_id = (
+            f"{org_slug}_latest_alarm"
+        )
+
+        self._attr_device_info = DeviceInfo(
+            identifiers={
+                (
+                    DOMAIN,
+                    f"org_{self.org_id}",
+                )
+            },
+            name=org_name,
+            manufacturer="GroupAlarm",
+            model="Organization",
+        )
 
     @property
     def state(self):
 
-        alarms = self.coordinator.data.get("alarms", [])
+        org_data = self.coordinator.data["organizations"].get(
+            self.org_id
+        )
 
-        return alarms[0].get("id") if alarms else "no_alarm"
+        if not org_data:
+            return "no_alarm"
+
+        alarms = org_data.get("alarms", [])
+
+        if not alarms:
+            return "no_alarm"
+
+        return alarms[0].get("id")
 
     @property
     def extra_state_attributes(self):
 
-        alarms = self.coordinator.data.get("alarms", [])
-        latest = self.coordinator.data.get("latest_alarm") or {}
+        org_data = self.coordinator.data["organizations"].get(
+            self.org_id
+        )
+
+        if not org_data:
+            return {}
+
+        alarms = org_data.get(
+            "alarms",
+            [],
+        )
+
+        latest = org_data.get(
+            "latest_alarm"
+        ) or {}
 
         if not alarms:
             return {}

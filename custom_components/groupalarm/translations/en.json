@@ -1,0 +1,45 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "GroupAlarm API DEV",
+        "description": "Please enter your API token.",
+        "data": {
+          "hub_name": "Hub Name",
+          "api_token": "API Token",
+          "enable_appointments": "Enable appointments"
+        }
+      },
+      "orgs": {
+        "title": "Select organizations",
+        "description": "Choose the organizations",
+        "data": {
+          "organizations": "Organizations"
+        }
+      }
+    },
+    "abort": {
+      "no_organizations": "No organizations found.",
+      "updated": "Configuration updated"
+    },
+    "error": {
+      "cannot_connect": "Connection to GroupAlarm API failed"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "GroupAlarm options",
+        "description": "Edit your hub",
+        "data": {
+          "hub_name": "Hub Name",
+          "api_token": "API Token",
+          "organizations": "Organizations",
+          "enable_appointments": "Enable appointments",
+          "scan_interval": "Scan Interval (Seconds)",
+          "appointment_lookahead_days": "Appointment Lookahead (Days)"
+        }
+      }
+    }
+  }
+}

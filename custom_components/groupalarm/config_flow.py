@@ -1,90 +1,109 @@
+# Copyright (C) 2026 | GamingonTour1 | All Rights Reserved
+# Unauthorized copying, distributing, and using of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+# Written by Lennox Matzerath (GamingonTour1) <gamingontour2016@gmail.com>
+
+import logging
 import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.selector import (
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
+from .api import GroupAlarmAPI
 from .const import (
     DOMAIN,
     CONF_API_TOKEN,
-    CONF_ORG_ID,
-    CONF_ORG_NAME,
+    CONF_HUB_NAME,
+    CONF_ORGANIZATIONS,
+    CONF_ENABLE_APPOINTMENTS,
 )
-from .api import GroupAlarmAPI
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class GroupAlarmConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
-    def __init__(self):
-        self.api_token = None
-        self.organizations = {}
-
     async def async_step_user(self, user_input=None):
-
-        if self._async_current_entries():
-            self.api_token = self._async_current_entries()[0].data[CONF_API_TOKEN]
-            return await self.async_step_org()
+        errors = {}
 
         if user_input is not None:
-            self.api_token = user_input[CONF_API_TOKEN]
-            return await self.async_step_org()
+            self._api_token = user_input[CONF_API_TOKEN].strip()
+            self._hub_name = user_input[CONF_HUB_NAME].strip()
+            self._enable_appointments = user_input.get(CONF_ENABLE_APPOINTMENTS, False)
+
+            session = async_get_clientsession(self.hass)
+
+            api = GroupAlarmAPI(session=session, api_token=self._api_token)
+
+            try:
+                self._organizations = await api.get_organizations()
+
+                if not self._organizations:
+                    return self.async_abort(reason="no_organizations")
+
+                return await self.async_step_orgs()
+
+            except Exception as err:
+                _LOGGER.exception("Failed to fetch organizations: %s", err)
+                errors["base"] = "cannot_connect"
 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema({
+                vol.Required(CONF_HUB_NAME): str,
                 vol.Required(CONF_API_TOKEN): str,
+                vol.Optional(CONF_ENABLE_APPOINTMENTS, default=False): bool,
             }),
+            errors=errors,
         )
 
-    async def async_step_org(self, user_input=None):
+    async def async_step_orgs(self, user_input=None):
+        used_orgs = set()
 
-        if not self.api_token:
-            return self.async_abort(reason="missing_token")
-
-        session = async_get_clientsession(self.hass)
-
-        api = GroupAlarmAPI(
-            session=session,
-            token=self.api_token,
-            org_id=0,
-        )
-
-        try:
-            orgs = await api.get_organizations()
-        except Exception:
-            return self.async_abort(reason="cannot_connect")
-
-        used_org_ids = {
-            entry.data[CONF_ORG_ID]
-            for entry in self._async_current_entries()
-        }
-
-        available_orgs = {
-            str(org["id"]): org["name"]
-            for org in orgs
-            if org["id"] not in used_org_ids
-        }
-
-        if not available_orgs:
-            return self.async_abort(reason="no_organizations")
+        for entry in self._async_current_entries():
+            used_orgs.update(entry.options.get(CONF_ORGANIZATIONS, []))
 
         if user_input is not None:
-
-            org_id = int(user_input["org_id"])
-            org_name = available_orgs[str(org_id)]
-
             return self.async_create_entry(
-                title=org_name,
+                title=self._hub_name,
                 data={
-                    CONF_API_TOKEN: self.api_token,
-                    CONF_ORG_ID: org_id,
-                    CONF_ORG_NAME: org_name,
+                    CONF_API_TOKEN: self._api_token,
+                    CONF_HUB_NAME: self._hub_name,
                 },
+                options={
+                    CONF_ORGANIZATIONS: [
+                        int(x) for x in user_input[CONF_ORGANIZATIONS]
+                    ],
+                    CONF_ENABLE_APPOINTMENTS: self._enable_appointments,
+                }
             )
 
+        options = [
+            {"label": org["name"], "value": str(org["id"])}
+            for org in self._organizations
+            if org["id"] not in used_orgs
+        ]
+
         return self.async_show_form(
-            step_id="org",
+            step_id="orgs",
             data_schema=vol.Schema({
-                vol.Required("org_id"): vol.In(available_orgs)
+                vol.Required(CONF_ORGANIZATIONS): SelectSelector(
+                    SelectSelectorConfig(
+                        options=options,
+                        multiple=True,
+                        mode=SelectSelectorMode.DROPDOWN,
+                    )
+                )
             }),
         )
+
+    @staticmethod
+    def async_get_options_flow(config_entry):
+        from .options_flow import GroupAlarmOptionsFlow
+        return GroupAlarmOptionsFlow(config_entry)

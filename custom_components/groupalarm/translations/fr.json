@@ -1,0 +1,45 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "GroupAlarm API DEV",
+        "description": "Veuillez saisir votre jeton API.",
+        "data": {
+          "hub_name": "Nom du hub",
+          "api_token": "Jeton API",
+          "enable_appointments": "Activer le calendrier des rendez-vous"
+        }
+      },
+      "orgs": {
+        "title": "Sélectionner les organisations",
+        "description": "Choisissez les organisations",
+        "data": {
+          "organizations": "Organisations"
+        }
+      }
+    },
+    "abort": {
+      "no_organizations": "Aucune organisation trouvée.",
+      "updated": "Configuration mise à jour"
+    },
+    "error": {
+      "cannot_connect": "Échec de la connexion à l’API GroupAlarm"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options GroupAlarm",
+        "description": "Modifier votre hub",
+        "data": {
+          "hub_name": "Nom du hub",
+          "api_token": "Jeton API",
+          "organizations": "Organisations",
+          "enable_appointments": "Activer le calendrier des rendez-vous",
+          "scan_interval": "Intervalle d'analyse (secondes)",
+          "appointment_lookahead_days": "Nombre de jours à l'avance pour les rendez-vous"
+        }
+      }
+    }
+  }
+}

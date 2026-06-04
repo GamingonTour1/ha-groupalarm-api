@@ -1,0 +1,45 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "GroupAlarm API DEV",
+        "description": "Bitte gib deinen API Token ein.",
+        "data": {
+          "hub_name": "Hub Name",
+          "api_token": "API Token",
+          "enable_appointments": "Terminkalender aktivieren"
+        }
+      },
+      "orgs": {
+        "title": "Organisationen auswählen",
+        "description": "Wähle die Organisationen aus",
+        "data": {
+          "organizations": "Organisationen"
+        }
+      }
+    },
+    "abort": {
+      "no_organizations": "Keine Organisationen gefunden.",
+      "updated": "Konfiguration aktualisiert"
+    },
+    "error": {
+      "cannot_connect": "Verbindung zur GroupAlarm API fehlgeschlagen"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "GroupAlarm Optionen",
+        "description": "Bearbeite deinen Hub",
+        "data": {
+          "hub_name": "Hub Name",
+          "api_token": "API Token",
+          "organizations": "Organisationen",
+          "enable_appointments": "Terminkalender aktivieren",
+          "scan_interval": "Prüfintervall (Sekunden)",
+          "appointment_lookahead_days": "Termine im Voraus laden (Tage)"
+        }
+      }
+    }
+  }
+}

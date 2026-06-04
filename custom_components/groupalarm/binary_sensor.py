@@ -6,38 +6,89 @@
 from datetime import datetime, timezone
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .utils import slugify
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
-
+async def async_setup_entry(
+    hass,
+    entry,
+    async_add_entities,
+):
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
-    async_add_entities([
-        GroupAlarmActiveBinarySensor(coordinator)
-    ])
+    entities = []
+
+    for org_id in coordinator.orgs:
+        entities.append(
+            GroupAlarmActiveBinarySensor(
+                coordinator,
+                org_id,
+                entry,
+            )
+        )
+
+    async_add_entities(entities)
 
 
-class GroupAlarmActiveBinarySensor(CoordinatorEntity, BinarySensorEntity):
+class GroupAlarmActiveBinarySensor(
+    CoordinatorEntity,
+    BinarySensorEntity,
+):
 
-    def __init__(self, coordinator):
+    def __init__(
+        self,
+        coordinator,
+        org_id,
+        entry,
+    ):
         super().__init__(coordinator)
 
-        org = slugify(coordinator.org_name)
+        self.org_id = int(org_id)
 
-        self._attr_name = f"{coordinator.org_name} Active"
-        self._attr_unique_id = f"{org}_active"
+        org = coordinator.org_info.get(
+            self.org_id,
+            {},
+        )
+
+        org_name = org.get(
+            "name",
+            f"Org {self.org_id}",
+        )
+
+        org_slug = slugify(org_name)
+
+        self._attr_name = f"{org_name} Active"
+        self._attr_unique_id = f"{org_slug}_active"
+
+        self._attr_device_info = DeviceInfo(
+            identifiers={
+                (
+                    DOMAIN,
+                    f"org_{self.org_id}",
+                )
+            },
+            name=org_name,
+            manufacturer="GroupAlarm",
+            model="Organization",
+        )
 
     @property
     def is_on(self):
 
-        alarms = self.coordinator.data.get("alarms", [])
-        latest = self.coordinator.data.get("latest_alarm")
+        org_data = self.coordinator.data["organizations"].get(
+            self.org_id
+        )
 
-        if not alarms or not latest:
+        if not org_data:
+            return False
+
+        latest = org_data.get("latest_alarm")
+
+        if not latest:
             return False
 
         end_date = latest.get("endDate")
@@ -46,8 +97,17 @@ class GroupAlarmActiveBinarySensor(CoordinatorEntity, BinarySensorEntity):
             return True
 
         try:
-            end_dt = datetime.fromisoformat(end_date.replace("Z", "+00:00"))
-            return datetime.now(timezone.utc) < end_dt
+            end_dt = datetime.fromisoformat(
+                end_date.replace(
+                    "Z",
+                    "+00:00",
+                )
+            )
+
+            return (
+                datetime.now(timezone.utc)
+                < end_dt
+            )
 
         except ValueError:
             return False
