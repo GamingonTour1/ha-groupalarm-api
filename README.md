@@ -137,6 +137,7 @@ Profilbild → **Profil**
 - alarmResources
 - optionalContent
 - feedback
+- selfFeedback
 
 ---
 

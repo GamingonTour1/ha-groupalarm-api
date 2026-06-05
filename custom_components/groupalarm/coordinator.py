@@ -13,9 +13,16 @@ _LOGGER = logging.getLogger(__name__)
 
 class GroupAlarmCoordinator(DataUpdateCoordinator):
 
-    def __init__(self, hass, api, hub_name: str, orgs: list[int], enable_appointments: bool,
-                 scan_interval: int = 30,
-                 appointment_lookahead_days: int = 30):
+    def __init__(
+        self,
+        hass,
+        api,
+        hub_name: str,
+        orgs: list[int],
+        enable_appointments: bool,
+        scan_interval: int = 30,
+        appointment_lookahead_days: int = 30,
+    ):
 
         super().__init__(
             hass,
@@ -33,13 +40,56 @@ class GroupAlarmCoordinator(DataUpdateCoordinator):
         self.lookahead_days = appointment_lookahead_days
 
         self.org_info = {}
+        self.user_id = None
+
+    def _build_self_feedback(self, alarm: dict):
+        """Berechnet eigenes Feedback aus Alarmdaten"""
+
+        if not alarm:
+            return {
+                "feedback": False,
+                "state": "NO_ALARM",
+                "responseTime": None,
+                "duration": None,
+                "comment": None,
+            }
+
+        feedback_list = alarm.get("feedback", [])
+        user_id = self.user_id
+
+        if not user_id or not isinstance(feedback_list, list):
+            return {
+                "feedback": False,
+                "state": "UNKNOWN",
+                "responseTime": None,
+                "duration": None,
+                "comment": None,
+            }
+
+        for entry in feedback_list:
+            if entry.get("userID") == user_id:
+                return {
+                    "feedback": entry.get("feedback", False),
+                    "state": entry.get("state", "UNKNOWN"),
+                    "responseTime": entry.get("responseTime"),
+                    "duration": entry.get("userDuration"),
+                    "comment": entry.get("userComment"),
+                }
+
+        return {
+            "feedback": False,
+            "state": "NOT_ALARMED",
+            "responseTime": None,
+            "duration": None,
+            "comment": None,
+        }
 
     async def _async_update_data(self):
 
         try:
             organizations = await self.api.get_organizations()
             user = await self.api.get_user()
-            user_id = user["id"]
+            self.user_id = user["id"]
 
             result = {
                 "organizations": {},
@@ -47,7 +97,6 @@ class GroupAlarmCoordinator(DataUpdateCoordinator):
             }
 
             now = datetime.now(timezone.utc)
-
             active_org_ids = set()
 
             for org in organizations:
@@ -65,6 +114,8 @@ class GroupAlarmCoordinator(DataUpdateCoordinator):
                 latest_alarm = None
                 if alarms:
                     latest_alarm = await self.api.get_alarm(alarms[0]["id"])
+
+                    latest_alarm["selfFeedback"] = self._build_self_feedback(latest_alarm)
 
                 result["organizations"][org_id] = {
                     "alarms": alarms,
@@ -89,24 +140,29 @@ class GroupAlarmCoordinator(DataUpdateCoordinator):
                         try:
                             full = await self.api.get_appointment(a["id"])
 
-                            feedback = 0
+                            participants = full.get("participants", [])
 
-                            for participant in full.get("participants", []):
-                                if participant.get("userID") == user_id:
-                                    feedback = participant.get("feedback", 0)
+                            is_participant = False
+                            feedback_value = None
+
+                            for p in participants:
+                                if p.get("userID") == self.user_id:
+                                    is_participant = True
+                                    feedback_value = p.get("feedback", 0)
                                     break
 
-                            if feedback == 2:
+                            if not is_participant:
+                                continue
+
+                            if feedback_value == 2:
                                 continue
 
                             name = a.get("name", "")
 
-                            if feedback == 0:
-                                display = f"[?] {name}"
-                            else:
-                                display = name
+                            a["display_name"] = (
+                                f"[?] {name}" if feedback_value == 0 else name
+                            )
 
-                            a["display_name"] = display
                             cleaned.append(a)
 
                         except Exception:

@@ -32,48 +32,23 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class GroupAlarmLatestSensor(
-    CoordinatorEntity,
-    Entity,
-):
+class GroupAlarmLatestSensor(CoordinatorEntity, Entity):
 
-    def __init__(
-        self,
-        coordinator,
-        org_id,
-        entry,
-    ):
+    def __init__(self, coordinator, org_id, entry):
         super().__init__(coordinator)
 
         self.org_id = int(org_id)
 
-        org = coordinator.org_info.get(
-            self.org_id,
-            {},
-        )
+        org = coordinator.org_info.get(self.org_id, {})
 
-        org_name = org.get(
-            "name",
-            f"Org {self.org_id}",
-        )
-
+        org_name = org.get("name", f"Org {self.org_id}")
         org_slug = slugify(org_name)
 
-        self._attr_name = (
-            f"{org_name} Latest Alarm"
-        )
-
-        self._attr_unique_id = (
-            f"{org_slug}_latest_alarm"
-        )
+        self._attr_name = f"{org_name} Latest Alarm"
+        self._attr_unique_id = f"{org_slug}_latest_alarm"
 
         self._attr_device_info = DeviceInfo(
-            identifiers={
-                (
-                    DOMAIN,
-                    f"org_{self.org_id}",
-                )
-            },
+            identifiers={(DOMAIN, f"org_{self.org_id}")},
             name=org_name,
             manufacturer="GroupAlarm",
             model="Organization",
@@ -81,10 +56,7 @@ class GroupAlarmLatestSensor(
 
     @property
     def state(self):
-
-        org_data = self.coordinator.data["organizations"].get(
-            self.org_id
-        )
+        org_data = self.coordinator.data["organizations"].get(self.org_id)
 
         if not org_data:
             return "no_alarm"
@@ -99,21 +71,13 @@ class GroupAlarmLatestSensor(
     @property
     def extra_state_attributes(self):
 
-        org_data = self.coordinator.data["organizations"].get(
-            self.org_id
-        )
+        org_data = self.coordinator.data["organizations"].get(self.org_id)
 
         if not org_data:
             return {}
 
-        alarms = org_data.get(
-            "alarms",
-            [],
-        )
-
-        latest = org_data.get(
-            "latest_alarm"
-        ) or {}
+        alarms = org_data.get("alarms", [])
+        latest = org_data.get("latest_alarm") or {}
 
         if not alarms:
             return {}
@@ -127,4 +91,5 @@ class GroupAlarmLatestSensor(
             "alarmResources": latest.get("alarmResources"),
             "optionalContent": latest.get("optionalContent"),
             "feedback": latest.get("feedback"),
+            "selfFeedback": latest.get("selfFeedback"),
         }
