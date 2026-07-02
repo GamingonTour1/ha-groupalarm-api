@@ -1,7 +1,5 @@
-# Copyright (C) 2026 | GamingonTour1 | All Rights Reserved
-# Unauthorized copying, distributing, and using of this file, via any medium is strictly prohibited
-# Proprietary and confidential
-# Written by Lennox Matzerath (GamingonTour1) <gamingontour2016@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Lennox Matzerath (GamingonTour1)
 
 import aiohttp
 import logging
